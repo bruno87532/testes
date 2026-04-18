@@ -22,8 +22,9 @@ model User {
 }
 
 model Task {
-  id     String @id @default(uuid())
-  status Status
+  id          String @id @default(uuid())
+  description String
+  status      Status
 
   idUser String
   userId User   @relation(fields: [idUser], references: [id], onDelete: Cascade)
