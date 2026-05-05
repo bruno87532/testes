@@ -81,6 +81,30 @@ describe("Task E2E", () => {
     taskId = res.body.task.id;
   });
 
+  it("should not create more than 10 tasks", async () => {
+    for (let index = 2; index <= 10; index++) {
+      await request(app.getHttpServer())
+        .post("/task")
+        .set("Cookie", cookie)
+        .send({
+          status: "PROGRESS",
+          description: `Task ${index}`,
+        })
+        .expect(201);
+    }
+
+    const res = await request(app.getHttpServer())
+      .post("/task")
+      .set("Cookie", cookie)
+      .send({
+        status: "PROGRESS",
+        description: "Task 11",
+      })
+      .expect(403);
+
+    expect(res.body.message).toBe("maximum number of tasks already created");
+  });
+
   it("get tasks", async () => {
     const res = await request(app.getHttpServer())
       .get("/task")
